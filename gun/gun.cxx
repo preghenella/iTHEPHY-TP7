@@ -12,19 +12,19 @@ int main()
   HepMC::Pythia8ToHepMC ToHepMC;
   HepMC::IO_GenEvent ascii_io("gun.hepmc", std::ios::out);
   
-  // init pythia
+  // pythia
   Pythia pythia;
-  pythia.readString("SoftQCD:elastic on");
-  pythia.init();
-
   // force decays
   pythia.readString("333:mayDecay = on");
   // [mother]:oneChannel = 1 1. 0 [list of daughters]
   pythia.readString("333:oneChannel = 1 1. 0 -11 11"); // phi -> e+ e-
+  // init
+  pythia.readString("SoftQCD:elastic on");
+  pythia.init();
 
   // event loop
   for (int iev = 0; iev < 10; ++iev) {
-    pythia.event.clear();
+    pythia.event.reset();
     pythia.event.append(333, 11, 0, 0, px, py, pz, e, m);
     pythia.moreDecays();
     pythia.event.list();
