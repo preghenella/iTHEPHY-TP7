@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
 
   int nevents, pdg;
-  std::string config, output = "gun.hepmc";
+  std::string config, output;
   double px, py, pz;
   bool verbose;
   
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
       ("py", po::value<double>(&px)->default_value(0.), "Momentum in the y-direction")
       ("pz", po::value<double>(&px)->default_value(1.), "Momentum in the z-direction")
       ("config,c", po::value<std::string>(&config), "Configuration file")
-      ("output,o", po::value<std::string>(&output)->default_value("gun.hepmc"), "Output HepMC file")
+      ("output,o", po::value<std::string>(&output)->default_value("pythia-gun.hepmc"), "Output HepMC file")
       ("verbose,V", po::bool_switch(&verbose)->default_value(false), "Verbose event listing")
       ;
     

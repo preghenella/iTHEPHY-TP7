@@ -1,4 +1,4 @@
-all: gun
+all: pythia-gun
 
-gun: gun.cxx
-	g++ -o gun gun.cxx -I${PYTHIA8_ROOT}/include -L${PYTHIA8_ROOT}/lib -lpythia8 -I${HEPMC_ROOT}/include -L${HEPMC_ROOT}/lib -lHepMC -lboost_program_options
+pythia-gun: pythia-gun.cxx
+	g++ -o pythia-gun pythia-gun.cxx -I${PYTHIA8_ROOT}/include -L${PYTHIA8_ROOT}/lib -lpythia8 -I${HEPMC_ROOT}/include -L${HEPMC_ROOT}/lib -lHepMC -lboost_program_options
