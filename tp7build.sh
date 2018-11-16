@@ -281,7 +281,7 @@ build_delphes() {
     mkdir obj
     cd obj
     echo "--- Building Delphes ---" && \
-	cmake $SOURCE -DCMAKE_INSTALL_PREFIX=$INSTALL && \
+	cmake $SOURCE -DCMAKE_POLICY_DEFAULT_CMP0074=NEW -DCMAKE_INSTALL_PREFIX=$INSTALL && \
 	make && make install && cd ..    
     cd -
     rm -rf $TP7_INSTALL/Delphes

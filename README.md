@@ -1,5 +1,25 @@
 # iTHEPHY-TP7
 
+## Prerequisites
+The following packages must be installed on your system to be able to build the TP7 software:
+
+- autoconf
+- automake
+- libtool
+- gcc
+- boost
+
+Depending on your OS, you might need to do
+
+`$ sudo apt-get update`
+`$ sudo apt-get install [packages]`
+
+or
+
+`$ brew update`
+`$ brew upgrade`
+`$ brew install [packages]`
+
 ## Load software environment
 You can load the software environment with
 
@@ -10,7 +30,28 @@ The shell prompt will be modified to signal that you are within the TP7 software
 `[tp7env]$`
 
 ## Download and build software
+You can build the TP7 software with
+
 `$ ./tp7build.sh`
+
+which will download and install everything in one go. In case of troubles it will not be easy to find where the failuer happened, though.
+You can download and build one package at a time with
+
+`$./tp7build.sh download build [package]`
+
+and check for possible errors.
+The available packages are:
+
+- hepmc
+- lhapdf
+- pythia6
+- pythia8
+- agile
+- sacrifice
+- root
+- delphes
+
+Packages are moslty indenpendent one to another, so the order does not matter in general. But it is better you follow the order above.
 
 ## Event generation with Pythia8
 Event generation with Pythia8 is interfaced by the Sacrifice software program.
