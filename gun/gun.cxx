@@ -1,34 +1,88 @@
+#include <boost/program_options.hpp>
+#include <string>
+
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/HepMC2.h"
 
 using namespace Pythia8;
 
-int main()
+int main(int argc, char **argv)
 {
 
-  double px = 0., py = 0., pz = 1., m = 1.019461;
-  double e = sqrt(px * px + py * py + pz * pz + m * m);
-
+  int nevents, pdg;
+  std::string config, output = "gun.hepmc";
+  double px, py, pz;
+  bool verbose;
+  
+  /** process arguments **/
+  namespace po = boost::program_options;
+  po::options_description desc("Options");
+  try {
+    desc.add_options()
+      ("help", "Print help messages")
+      ("nevents,n", po::value<int>(&nevents)->default_value(10), "Number of events to be generated")
+      ("pdg,p", po::value<int>(&pdg)->required(), "PDG code of the particle")
+      ("px", po::value<double>(&px)->default_value(0.), "Momentum in the x-direction")
+      ("py", po::value<double>(&px)->default_value(0.), "Momentum in the y-direction")
+      ("pz", po::value<double>(&px)->default_value(1.), "Momentum in the z-direction")
+      ("config,c", po::value<std::string>(&config), "Configuration file")
+      ("output,o", po::value<std::string>(&output)->default_value("gun.hepmc"), "Output HepMC file")
+      ("verbose,V", po::bool_switch(&verbose)->default_value(false), "Verbose event listing")
+      ;
+    
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+    
+    if (vm.count("help")) {
+      std::cout << desc << std::endl;
+      return 1;
+    }
+  }
+  catch(std::exception& e) {
+    std::cerr << "Error: " << e.what() << std::endl;
+    std::cout << desc << std::endl;
+    return 1;
+  }
+  
   HepMC::Pythia8ToHepMC ToHepMC;
-  HepMC::IO_GenEvent ascii_io("gun.hepmc", std::ios::out);
+  HepMC::IO_GenEvent ascii_io(output, std::ios::out);
   
   // pythia
   Pythia pythia;
-  // force decays
-  pythia.readString("333:mayDecay = on");
-  // [mother]:oneChannel = 1 1. 0 [list of daughters]
-  pythia.readString("333:oneChannel = 1 1. 0 -11 11"); // phi -> e+ e-
-  // init
+
+  // check valid pdg code
+  if (!pythia.particleData.isLepton(pdg) &&
+      !pythia.particleData.isHadron(pdg) &&
+      !pythia.particleData.isResonance(pdg)) {
+    std::cout << "Error: invalid PDG code \"" << pdg << "\"" << std::endl;
+    return 1;
+  }
+
+  // config
   pythia.readString("SoftQCD:elastic on");
+  if (!config.empty() && !pythia.readFile(config)) {
+    std::cout << "Error: could not read config file \"" << config << "\"" << std::endl;
+    return 1;
+  }
+
+  // init
   pythia.init();
+  double m = pythia.particleData.m0(pdg);
+  double e = sqrt(px * px + py * py + pz * pz + m * m);
 
   // event loop
-  for (int iev = 0; iev < 10; ++iev) {
-    pythia.event.reset();
-    pythia.event.append(333, 11, 0, 0, px, py, pz, e, m);
-    pythia.moreDecays();
-    pythia.event.list();
+  for (int iev = 0; iev < nevents; ++iev) {
 
+    // reset, add particle and decay
+    pythia.event.reset();
+    pythia.event.append(pdg, 11, 0, 0, px, py, pz, e, m);
+    pythia.moreDecays();
+
+    // print verbose
+    if (verbose) pythia.event.list();
+
+    // write HepMC
     HepMC::GenEvent *hepmcevt = new HepMC::GenEvent();
     ToHepMC.fill_next_event(pythia, hepmcevt);
     ascii_io << hepmcevt;
