@@ -277,7 +277,8 @@ build_delphes() {
     SOURCE=$TP7_SOURCE/Delphes-3.4.1
     INSTALL=$TP7_INSTALL/Delphes-3.4.1
     ### apply patches
-    patch $SOURCE/modules/TreeWriter.cc patches/Delphes-3.4.1/modules/TreeWriter.cc.patch
+    patch -N $SOURCE/modules/TreeWriter.cc patches/Delphes-3.4.1/modules/TreeWriter.cc.patch
+    patch -N $SOURCE/modules/TimeSmearing.cc patches/Delphes-3.4.1/modules/TimeSmearing.cc.patch
 
     mkdir -p $INSTALL
     cd $SOURCE
