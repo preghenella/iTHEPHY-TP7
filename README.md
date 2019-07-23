@@ -11,13 +11,13 @@ The following packages must be installed on your system to be able to build the 
 
 Depending on your OS, you might need to do
 
-`$ sudo apt-get update`
+`$ sudo apt-get update`  
 `$ sudo apt-get install [packages]`
 
 or
 
-`$ brew update`
-`$ brew upgrade`
+`$ brew update`  
+`$ brew upgrade`  
 `$ brew install [packages]`
 
 ## Load software environment
